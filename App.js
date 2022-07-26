@@ -2,6 +2,8 @@ import { StatusBar } from "expo-status-bar";
 import { Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
+import ExpensesContextProvider from './context/expenses-context'
+
 import AllExpenses from "./screen/AllExpenses";
 import ManageExpenses from "./screen/ManageExpenses";
 import RecentExpenses from "./screen/RecentExpenses";
@@ -66,28 +68,30 @@ function ExpensesOverview() {
 export default function App() {
   return (
     <>
-      <NavigationContainer>
-        <Stack.Navigator
-          screenOptions={{
-            headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
-            headerTintColor: "white",
-            headerTitleAlign: "center",
-          }}
-        >
-          <Stack.Screen
-            name="ExpensesOverview"
-            component={ExpensesOverview}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="ManageExpenses"
-            component={ManageExpenses}
-            options={{
-              presentation: 'modal'
+      <ExpensesContextProvider>
+        <NavigationContainer>
+          <Stack.Navigator
+            screenOptions={{
+              headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
+              headerTintColor: "white",
+              headerTitleAlign: "center",
             }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+          >
+            <Stack.Screen
+              name="ExpensesOverview"
+              component={ExpensesOverview}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="ManageExpenses"
+              component={ManageExpenses}
+              options={{
+                presentation: 'modal'
+              }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </ExpensesContextProvider>
       <StatusBar style="auto" />
     </>
   );
