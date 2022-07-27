@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import { TextInput } from "react-native-web";
+import { TextInput } from "react-native";
 
 const Input = ({ label, textInputConfig }) => {
   return (
