@@ -1,8 +1,24 @@
+import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import Button from "../UI/Button";
 import Input from "./Input";
 
-const ExpenseForm = () => {
-  function amountChangedHandler() {}
+const ExpenseForm = ({ submitButtonLabel, onCancel, onSubmit, }) => {
+  const [inputValue, setInputValue] = useState({
+    amount: "",
+    date: "",
+    description: "",
+  });
+  function inputChangeHandler(inputIdentifier, enteredValue) {
+    setInputValue((curInputValue) => {
+      return {
+        ...curInputValue,
+        [inputIdentifier]: enteredValue, // The square bracktes allow us to dynamically set the amount, date or description
+      };
+    });
+  }
+
+  function submitHandler() {}
 
   return (
     <View style={styles.form}>
@@ -13,7 +29,8 @@ const ExpenseForm = () => {
           label="Amount"
           textInputConfig={{
             keyboardType: "decimal-pad",
-            onChangeText: amountChangedHandler,
+            onChangeText: inputChangeHandler.bind(this, "amount"),
+            value: inputValue.amount,
           }}
         />
         <Input
@@ -32,6 +49,14 @@ const ExpenseForm = () => {
           multiline: true,
         }}
       />
+      <View style={styles.buttons}>
+        <Button style={styles.button} mode="flat" onPress={onCancel}>
+          Cancel
+        </Button>
+        <Button style={styles.button} onPress={submitHandler}>
+          {submitButtonLabel}
+        </Button>
+      </View>
     </View>
   );
 };
@@ -44,10 +69,10 @@ const styles = StyleSheet.create({
   },
   title: {
     marginVertical: 24,
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
+    fontWeight: "bold",
+    color: "white",
   },
   inputRows: {
     flexDirection: "row",
@@ -55,5 +80,14 @@ const styles = StyleSheet.create({
   },
   rowInput: {
     flex: 1,
-  }
+  },
+  button: {
+    minWidth: 120,
+    marginHorizontal: 8,
+  },
+  buttons: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
