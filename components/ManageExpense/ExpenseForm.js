@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import Button from "../UI/Button";
 import Input from "./Input";
 
-const ExpenseForm = ({ submitButtonLabel, onCancel, onSubmit, }) => {
+const ExpenseForm = ({ submitButtonLabel, onCancel, onSubmit }) => {
   const [inputValue, setInputValue] = useState({
     amount: "",
     date: "",
@@ -18,7 +18,15 @@ const ExpenseForm = ({ submitButtonLabel, onCancel, onSubmit, }) => {
     });
   }
 
-  function submitHandler() {}
+  function submitHandler() {
+    const expenseData = {
+      amount: +inputValue.amount, // the + converts a string into a number
+      date: new Date(inputValue.date),
+      description: inputValue.description,
+    };
+
+    onSubmit(expenseData);
+  }
 
   return (
     <View style={styles.form}>
@@ -39,7 +47,8 @@ const ExpenseForm = ({ submitButtonLabel, onCancel, onSubmit, }) => {
           textInputConfig={{
             placeholder: "YYY-MM-DD",
             maxLneght: 10,
-            onChangeText: () => {},
+            onChangeText: inputChangeHandler.bind(this, "date"),
+            value: inputValue.date,
           }}
         />
       </View>
@@ -47,6 +56,8 @@ const ExpenseForm = ({ submitButtonLabel, onCancel, onSubmit, }) => {
         label="Description"
         textInputConfig={{
           multiline: true,
+          onChangeText: inputChangeHandler.bind(this, "description"),
+          value: inputValue.description,
         }}
       />
       <View style={styles.buttons}>
