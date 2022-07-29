@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Alert, StyleSheet, Text, View } from "react-native";
+import { GlobalStyles } from "../../constants/styles";
 
 import { getFormattedDate } from "../../util/date";
 
@@ -75,6 +76,7 @@ const ExpenseForm = ({
       <View style={styles.inputRows}>
         <Input
           style={styles.rowInput}
+          invalid={!inputs.amount.isValid}
           label="Amount"
           textInputConfig={{
             keyboardType: "decimal-pad",
@@ -84,6 +86,7 @@ const ExpenseForm = ({
         />
         <Input
           style={styles.rowInput}
+          invalid={!inputs.date.isValid}
           label="Date"
           textInputConfig={{
             placeholder: "YYY-MM-DD",
@@ -95,13 +98,14 @@ const ExpenseForm = ({
       </View>
       <Input
         label="Description"
+        invalid={!inputs.description.isValid}
         textInputConfig={{
           multiline: true,
           onChangeText: inputChangeHandler.bind(this, "description"),
           value: inputs.description.value,
         }}
       />
-      { formIsInvalid && <Text>Invalid input values - please check your input data</Text>}
+      { formIsInvalid && <Text style={styles.errorText}>Invalid input values - please check your input data</Text>}
       <View style={styles.buttons}>
         <Button style={styles.button} mode="flat" onPress={onCancel}>
           Cancel
@@ -134,6 +138,11 @@ const styles = StyleSheet.create({
   rowInput: {
     flex: 1,
   },
+  errorText: {
+    textAlign: 'center',
+    color: GlobalStyles.colors.error500,
+    margin: 8,
+  },
   button: {
     minWidth: 120,
     marginHorizontal: 8,
@@ -143,4 +152,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+
 });
