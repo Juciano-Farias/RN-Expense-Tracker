@@ -1,12 +1,17 @@
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 
-import { getFormattedDate } from '../../util/date'
+import { getFormattedDate } from "../../util/date";
 
 import Button from "../UI/Button";
 import Input from "./Input";
 
-const ExpenseForm = ({ defaultValue, submitButtonLabel, onCancel, onSubmit }) => {
+const ExpenseForm = ({
+  defaultValue,
+  submitButtonLabel,
+  onCancel,
+  onSubmit,
+}) => {
   const [inputValue, setInputValue] = useState({
     amount: defaultValue ? defaultValue.amount.toString() : "",
     date: defaultValue ? getFormattedDate(defaultValue.date) : "",
@@ -27,6 +32,15 @@ const ExpenseForm = ({ defaultValue, submitButtonLabel, onCancel, onSubmit }) =>
       date: new Date(inputValue.date),
       description: inputValue.description,
     };
+
+    const amoutIsValid = !isNaN(expenseData.amount) && expenseData.amount > 0;
+    const dateIsValid = expenseData.date.toString() !== "Invalid Date";
+    const description = expenseData.description.trim().length > 0; // trim() ignores the excess spaces in the end and the begnning of the string
+
+    if (!amoutIsValid || !dateIsValid || !description) {
+      Alert.alert('Invalid input', 'Please check your input values')
+      return;
+    }
 
     onSubmit(expenseData);
   }
