@@ -10,8 +10,8 @@ import { ExpensesContext } from "../context/expenses-context";
 const ManageExpenses = ({ route, navigation }) => {
   const expensesContext = useContext(ExpensesContext);
 
-  const editedExpenseId = route.params?.expenseId;
-  const isEditing = !!editedExpenseId;
+  const editedExpenseId = route.params?.expenseId; // ? is opiton value, can exist or not
+  const isEditing = !!editedExpenseId; // "!!" convert a truthy value into true and a falsy value into false
 
   const selectedExpense = expensesContext.expenses.find(
     (expense) => expense.id === editedExpenseId
