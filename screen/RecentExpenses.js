@@ -2,26 +2,36 @@ import { useContext, useEffect, useState } from "react";
 import ExpensesOutput from "../components/ExpensesOutput/ExpensesOutput";
 import { ExpensesContext } from "../context/expenses-context";
 import { getDateMinusDay } from "../util/date";
-import { fetchExpenses } from '../util/http'
-import LoadingOverlay from '../components/UI/LoadingOverlay'
+import { fetchExpenses } from "../util/http";
+import LoadingOverlay from "../components/UI/LoadingOverlay";
+import ErrorOverlay from "../components/UI/ErrorOverlay";
 
 const RecentExpenses = () => {
-  const [isFecthing, setIsFetching] = useState(true)
+  const [isFecthing, setIsFetching] = useState(true);
+  const [error, setError] = useState();
   const expensesContext = useContext(ExpensesContext);
 
   useEffect(() => {
     async function getExpenses() {
-      setIsFetching(true)
-      const expenses = await fetchExpenses()
-      setIsFetching(false)
-      expensesContext.setExpenses(expenses)
+      setIsFetching(true);
+      try {
+        const expenses = await fetchExpenses();
+        expensesContext.setExpenses(expenses);
+      } catch (e) {
+        setError("Could not fetch expenses!");
+      }
+      setIsFetching(false);
     }
 
-    getExpenses()
-  }, [])
+    getExpenses();
+  }, []);
 
-  if(isFecthing) {
-    return <LoadingOverlay />
+  if (error && !isFecthing) {
+    return <ErrorOverlay message={error} />;
+  }
+
+  if (isFecthing) {
+    return <LoadingOverlay />;
   }
 
   const recentExpenses = expensesContext.expenses.filter((expense) => {

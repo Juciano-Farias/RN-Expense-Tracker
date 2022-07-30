@@ -4,12 +4,16 @@ import ExpenseForm from "../components/ManageExpense/ExpenseForm";
 
 import IconButton from "../components/UI/IconsButton";
 import LoadingOverlay from "../components/UI/LoadingOverlay";
+import ErrorOverlay from "../components/UI/ErrorOverlay";
+
 import { GlobalStyles } from "../constants/styles";
 import { ExpensesContext } from "../context/expenses-context";
 import { storeExpense, updateExpense, deleteExpense } from "../util/http";
 
 const ManageExpenses = ({ route, navigation }) => {
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState();
+
   const expensesContext = useContext(ExpensesContext);
 
   const editedExpenseId = route.params?.expenseId; // ? is opiton value, can exist or not
@@ -26,10 +30,15 @@ const ManageExpenses = ({ route, navigation }) => {
   }, [navigation, isEditing]);
 
   async function deleteExpenseHandler() {
-    setIsSubmitting(true)
-    await deleteExpense(editedExpenseId)
-    expensesContext.deleteExpense(editedExpenseId);
-    navigation.goBack();
+    setIsSubmitting(true);
+    try {
+      await deleteExpense(editedExpenseId);
+      expensesContext.deleteExpense(editedExpenseId);
+      navigation.goBack();
+    } catch (e) {
+      setError("Could not delete expense - please try again later!");
+      setIsSubmitting(false);
+    }
   }
 
   function cancelHandler() {
@@ -37,19 +46,28 @@ const ManageExpenses = ({ route, navigation }) => {
   }
 
   async function confirmHandler(expenseData) {
-    setIsSubmitting(true)
-    if (isEditing) {
-      expensesContext.updateExpense(editedExpenseId, expenseData);
-      await updateExpense(editedExpenseId ,expenseData)
-    } else {
-      const id = await storeExpense(expenseData);
-      expensesContext.addExpense({ ...expenseData, id: id});
+    setIsSubmitting(true);
+    try {
+      if (isEditing) {
+        expensesContext.updateExpense(editedExpenseId, expenseData);
+        await updateExpense(editedExpenseId, expenseData);
+      } else {
+        const id = await storeExpense(expenseData);
+        expensesContext.addExpense({ ...expenseData, id: id });
+      }
+      navigation.goBack();
+    } catch (e) {
+      setError('Could not save data - please try again later')
+      setIsSubmitting(false)
     }
-    navigation.goBack();
   }
 
-  if(isSubmitting) {
-    return <LoadingOverlay />
+  if (error && !isSubmitting) {
+    return <ErrorOverlay message={error} />;
+  }
+
+  if (isSubmitting) {
+    return <LoadingOverlay />;
   }
 
   return (
